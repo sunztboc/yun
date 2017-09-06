@@ -1,14 +1,19 @@
-fsdafdsafds
 
-fdsaf
-d
-fsdafdas
-fdsfdsa
-fdsafdsa
-fsdafds
-afds
-afd
-safdsafdsa
-fdsafds
-fdsa
-fdsa
+import os
+import re
+
+for i,l,d in os.walk('e:'+os.sep+'dd'):
+    wr=open('sun.txt','w')
+    for se in d :
+        for l in open('e:'+os.sep+'dd'+os.sep+se) :
+            if 'CRC' in l:
+                split1=l.split(',')[-1]
+                sun= se+'\n'+split1
+#                print ((se)+":")
+#                print (l)
+
+                wr.write(sun)
+
+ls = open('sun.txt','r')
+result=ls.read()
+print (result)

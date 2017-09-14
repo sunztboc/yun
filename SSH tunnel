@@ -1,0 +1,37 @@
+# -*- coding: utf-8 -*-
+from sshtunnel import SSHTunnelForwarder
+import paramiko
+file1=open('wr.txt','w')
+
+for ip in open('ip.txt'):
+    ip=ip.split(' ')[0]
+    print ip
+    server = SSHTunnelForwarder(
+    ssh_address_or_host=('101.200.48.120', 22),  # 指定ssh登录的跳转机的address
+    ssh_username='root',  # 跳转机的用户
+    ssh_password='Ddlist123',  # 跳转机的密码
+    local_bind_address=('127.0.0.1', 10000),  # 本地绑定的端口
+    remote_bind_address=(ip, 22))  # 远程绑定的端口
+
+server.start()
+# 启动以后，操作本地的10000端口相当于操作10.10.11.102的3306端口  
+
+paramiko.util.log_to_file('paramiko.log')  # 创建SSH连接日志文件（只保留前一次连接的详细日志，以前的日志会自动被覆盖）
+
+ssh = paramiko.SSHClient()
+# 读取known_hosts
+ssh.load_system_host_keys()
+# 允许连接不在know_hosts文件中的主机
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+# 连接服务器
+ssh.connect(hostname='dydaka.com', port=22, username='root', password='citicnet')
+# 执行命令
+stdin, stdout, stderr = ssh.exec_command('ifconfig -a')
+s1=stdout.read()
+# 获取命令执行结果
+print s1
+# 关闭连接
+ssh.close()
+server.stop()
+file1.write(s1)
+file1.close()

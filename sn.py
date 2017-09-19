@@ -34,18 +34,21 @@ for parent,dirnames,filenames in os.walk(filePath):
                 #  --- 去掉每行换行符 '\n' ---
                 file02 = file02.strip('\n')
                 #  --- 判断开始标识 与 结束标识是否存在于当前行中 ---
-                if file02.endswith('#'):
-                    name=file02.split('#')[0]
-                    if file02.startswith('RP/'):
-                        name = file02.split(':')[1]
+
+                if file02.startswith('NAME:'):
+                    slot=file02.split(',')[0].split(':')[1].split('"')[1]
+                    name=filename.split('.')[0]
                 if startSign in file02:
-                    #print file02
                     PID=file02.split(',')[0].strip(' ').split(':')[1]
-                    #print PID
                     SN=file02.split(':')[-1]
                     getTable.write(index,0,name)
-                    getTable.write(index,1,PID)
-                    getTable.write(index, 2, SN)
+                    getTable.write(index,1,slot)
+                    getTable.write(index,2,PID)
+                    getTable.write(index, 3, SN)
+                    getTable.col(0).width = 5555
+                    getTable.col(1).width = 5555
+                    getTable.col(2).width = 5555
+                    getTable.col(3).width = 5555
                     index+=1
 
                     #print SN

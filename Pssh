@@ -1,0 +1,46 @@
+# -*- coding: utf-8 -*-
+import paramiko
+import threading
+def ssh2(ip,username,passwd,cmdlist,save):
+    try:
+#    serverlist = open("ip.txt", "r")
+#    for line in serverlist:
+        #建立连接
+
+        s=paramiko.SSHClient()
+        s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        s.connect(hostname = ip,username = username, password = passwd,timeout=5)
+
+        #打印分割符
+
+
+        #读取命令文件
+        cmdlist = open(cmd+".txt","r")
+        #执行命令
+        for line in cmdlist:
+            result= open(save+'.txt','a')
+            result.write('The object ip : '+ip+'  '+line+'\n')
+#           result.write('我们将要执行的命令是： '+line+'\n')
+            stdin,stdout,stderr=s.exec_command(line)
+            result.write( stdout.read())
+
+        #关闭连接
+        s.close()
+    except :
+        print '%s\tError\n'%(ip)
+
+#    serverlist.close()
+if __name__=='__main__':
+    cmd = 'cmd_list'#你要执行的命令列表
+#    username = "root" #用户名
+#    passwd = "citicnet"  #密码
+    threads = []  #多线程
+    print "Begin......"
+    for ip1 in open('ip.txt','r'):
+        ip = ip1.split(' ')[0]
+        save=ip1.split(' ')[-1]
+        username=ip1.split(' ')[1]
+        passwd=ip1.split(' ')[2]
+        save=save.strip()
+        a=threading.Thread(target=ssh2,args=(ip,username,passwd,cmd,save))
+        a.start()

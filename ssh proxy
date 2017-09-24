@@ -1,0 +1,68 @@
+# -*- coding: utf-8 -*-
+from sshtunnel import SSHTunnelForwarder
+import paramiko
+import threading
+
+import random
+def get_available_port(netstat_out):
+  for rand_pick in range(1024, 65536):
+    r = str(random.randint(1024, 65535))
+    if r not in netstat_out:
+      return r
+  raise Exception("cannot find a port")
+port =int(get_available_port('192.168.0.30'))
+
+def ssh2(ip,username,passwd,cmdlist,save):
+    '''try:
+#    tiaobanip = open("tiaobanip.txt", "r")
+#    for line in serverlist:
+        #建立连接'''
+    server = SSHTunnelForwarder(
+        ssh_address_or_host=('192.168.0.30', 22),  # 指定ssh登录的跳转机的address
+        ssh_username='root',  # 跳转机的用户
+        ssh_password='citicnet',  # 跳转机的密码
+        local_bind_address=('127.0.0.1', port),  # 本地绑定的端口
+        remote_bind_address=(ip, 22))  # 远程绑定的端口
+
+    server.start()
+    paramiko.util.log_to_file('paramiko.log')  # 创建SSH连接日志文件（只保留前一次连接的详细日志，以前的日志会自动被覆盖）
+    ssh = paramiko.SSHClient()
+        # 读取known_hosts
+    ssh.load_system_host_keys()
+        # 允许连接不在know_hosts文件中的主机
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(hostname = ip,username = username, password = passwd,timeout=5)
+    cmdlist = open(cmd+".txt","r")
+        #执行命令
+    for line in cmdlist:
+            print line
+            result= open(save+'.txt','a')
+            result.write('The object ip : '+ip+'  '+line)
+#            result.write('我们将要执行的命令是： '+line+'\n')
+            stdin,stdout,stderr=ssh.exec_command(line)
+            result.write(stdout.read())
+#            stdin.write('y'+'\n')
+#            print stdout.read()
+    ssh.close()
+    server.stop()
+    '''except :
+        print '%s\tError\n'%(ip)
+
+#    serverlist.close()
+
+# 连接服务器'''
+
+if __name__=='__main__':
+    cmd = 'cmd_list'#你要执行的命令列表
+#    username = "root" #用户名
+#    passwd = "citicnet"  #密码
+    threads = []  #多线程
+    print "Begin......"
+    for ip1 in open('ip.txt','r'):
+        ip = ip1.split(' ')[0]
+        save=ip1.split(' ')[-1]
+        username=ip1.split(' ')[1]
+        passwd=ip1.split(' ')[2]
+        save=save.strip()
+        a=threading.Thread(target=ssh2,args=(ip,username,passwd,cmd,save))
+        a.start()

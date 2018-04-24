@@ -6,7 +6,6 @@ import xlrd
 #  --- 获取当前路径 ---
 filePath=os.getcwd()
 #  --- 指定测试路径 ---
-file01='D:\python'
 #  --- 开始特定标识 ---
 startSign='PID: '
 #  --- 结束特定标识 ---
@@ -34,15 +33,15 @@ for parent,dirnames,filenames in os.walk(filePath):
                 #  --- 去掉每行换行符 '\n' ---
                 file02 = file02.strip('\n')
                 #  --- 判断开始标识 与 结束标识是否存在于当前行中 ---
-
+                if file02.startswith('hostname'):
+                    name = file02.split(' ')[1]
+                    getTable.write(index, 0, name)
                 if file02.startswith('NAME:'):
                     slot=file02.split(',')[0].split(':')[1].split('"')[1]
-                    name=filename.split('.')[0]
+                    getTable.write(index, 1, slot)
                 if startSign in file02:
                     PID=file02.split(',')[0].strip(' ').split(':')[1]
                     SN=file02.split(':')[-1]
-                    getTable.write(index,0,name)
-                    getTable.write(index,1,slot)
                     getTable.write(index,2,PID)
                     getTable.write(index, 3, SN)
                     getTable.col(0).width = 5555
@@ -55,6 +54,7 @@ for parent,dirnames,filenames in os.walk(filePath):
 
 
 #  --- 判断该表格是否存在 ---
-if os.path.isfile(filePath+os.sep+'sun1.xls'):
-    os.remove(filePath+os.sep+'sun1.xls')
-getWordExcel.save(filePath+os.sep+'sun1.xls')
+if os.path.isfile(filePath+os.sep+'ciscosn.xls'):
+    os.remove(filePath+os.sep+'ciscosn.xls')
+
+getWordExcel.save(filePath+os.sep+'ciscosn.xls')

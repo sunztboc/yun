@@ -52,3 +52,4 @@ if __name__=='__main__':
         lock.acquire() # 必需要在创建时加锁，否则不生效  pstree -p 22786|wc -l 可以查看线程数
         t=threading.Thread(target=put_public_key, args=(i,public_key,passwd))
         t.start()
+        #this is a good method
